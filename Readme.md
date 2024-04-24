@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Елена Фукина](https://up.htmlacademy.ru/ecmascript/23/user/1706423).
-* Наставник: `Неизвестно`.
+* Студент: [Elena Fukina](https://up.htmlacademy.ru/ecmascript/23/user/1706423).
+* Наставник: [Yulia Volkova](https://htmlacademy.ru/profile/julie_volkovas).
 
 ---
 
