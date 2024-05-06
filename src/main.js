@@ -1,21 +1,12 @@
-import {render} from './render';
+import GeneralPresenter from './presenter/general-presenter';
 import Filter from './view/filter';
-import Sort from './view/sort';
-import EventsList from './view/events-list';
-import EventEditForm from './view/event-edit-form';
-import TripEvent from './view/trip-event';
+import {render} from './render';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
 const mainContainer = document.querySelector('.trip-events');
+const generalPresenter = new GeneralPresenter(mainContainer);
 
 render(new Filter(), filterContainer);
-render(new Sort(), mainContainer);
-render(new EventsList(), mainContainer);
 
-const eventsContainer = document.querySelector('.trip-events__list');
+generalPresenter.init();
 
-render(new EventEditForm(), eventsContainer);
-
-for (let i = 0; i < 3; i++) {
-  render(new TripEvent(), eventsContainer);
-}
