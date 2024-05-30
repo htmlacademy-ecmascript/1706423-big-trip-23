@@ -37,3 +37,11 @@ export const EVENT_TYPES = [
   'sightseeing',
   'restaurant'
 ];
+
+export const DateFormat = {
+  DATE: 'MMM D',
+  DATE_WITH_YEAR: 'YYYY-MM-DD',
+  TIME: 'hh:mm',
+  DATE_TIME: 'YYYY-MM-DDTHH:mm',
+  CALENDAR_DATE: 'DD/MM/YY hh:mm',
+};
