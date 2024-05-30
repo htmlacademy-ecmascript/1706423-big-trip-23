@@ -29,4 +29,12 @@ function getTimeInterval(dateFrom, dateTo) {
   return result;
 }
 
-export {getRandomArrayElement, getHumanDate, getTimeInterval};
+function getDefaultPoint() {
+  return {
+    destination: '5bbd083d-e0ec-451a-b146-f6343f63aa63',
+    offers: [],
+    type: 'flight'
+  };
+}
+
+export {getRandomArrayElement, getHumanDate, getTimeInterval, getDefaultPoint};
