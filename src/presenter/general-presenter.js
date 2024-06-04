@@ -55,6 +55,9 @@ export default class GeneralPresenter {
       places: this.#destinations,
       onFormSubmit: () => {
         replaceFormToPoint();
+      },
+      onRollupButtonClick: () => {
+        replaceFormToPoint();
       }
     });
 

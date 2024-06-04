@@ -99,6 +99,9 @@ const createEventEditFormTemplate = (point, options, places) => {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
@@ -121,15 +124,18 @@ export default class EventEditForm extends AbstractView {
   #options = null;
   #places = null;
   #handleFormSubmit = null;
+  #handleRollupButtonClick = null;
 
-  constructor({point, options, places, onFormSubmit}) {
+  constructor({point, options, places, onFormSubmit, onRollupButtonClick}) {
     super();
     this.#point = point;
     this.#options = options;
     this.#places = places;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupButtonClick = onRollupButtonClick;
 
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
   }
 
   get template() {
@@ -139,5 +145,10 @@ export default class EventEditForm extends AbstractView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit();
+  };
+
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupButtonClick();
   };
 }
