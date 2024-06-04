@@ -2,6 +2,7 @@ import Sort from '../view/sort';
 import EventsList from '../view/events-list';
 import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
+import NoPoints from '../view/no-points';
 import {render, replace} from '../framework/render';
 
 export default class GeneralPresenter {
@@ -13,6 +14,7 @@ export default class GeneralPresenter {
   #points = [];
   #offers = [];
   #destinations = [];
+  #filters = [];
 
   constructor({mainContainer, pointsModel}) {
     this.#mainContainer = mainContainer;
@@ -23,12 +25,9 @@ export default class GeneralPresenter {
     this.#points = [...this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
-    render(new Sort(), this.#mainContainer);
-    render(this.#eventsList, this.#mainContainer);
+    this.#filters = [...this.#pointsModel.filters];
 
-    for (const point of this.#points) {
-      this.#renderPoint(point);
-    }
+    this.#renderBoard();
   }
 
   #renderPoint(point) {
@@ -36,7 +35,6 @@ export default class GeneralPresenter {
       if (evt.key === 'Escape') {
         evt.preventDefault();
         replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
 
@@ -72,5 +70,18 @@ export default class GeneralPresenter {
     }
 
     render(tripEventComponent, this.#eventsList.element);
+  }
+
+  #renderBoard() {
+    if (this.#points.length === 0) {
+      render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer);
+    } else {
+      render(new Sort(), this.#mainContainer);
+      render(this.#eventsList, this.#mainContainer);
+
+      for (const point of this.#points) {
+        this.#renderPoint(point);
+      }
+    }
   }
 }

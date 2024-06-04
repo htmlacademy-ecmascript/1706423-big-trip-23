@@ -1,5 +1,5 @@
 import {EVENT_TYPES, DateFormat} from '../const';
-import {getHumanDate} from '../utils';
+import {getHumanDate} from '../utils/utils';
 import AbstractView from '../framework/view/abstract-view';
 
 const createEventType = (type, currentType = EVENT_TYPES[5]) => (`

@@ -1,4 +1,4 @@
-import {getHumanDate, getTimeInterval} from '../utils';
+import {getHumanDate, getTimeInterval} from '../utils/utils';
 import {DateFormat} from '../const';
 import AbstractView from '../framework/view/abstract-view';
 
