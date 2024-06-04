@@ -20,9 +20,9 @@ export default class GeneralPresenter {
   }
 
   init() {
-    this.#points = [...this.#pointsModel.getPoints()];
-    this.#offers = [...this.#pointsModel.getOffers()];
-    this.#destinations = [...this.#pointsModel.getDestinations()];
+    this.#points = [...this.#pointsModel.points];
+    this.#offers = [...this.#pointsModel.offers];
+    this.#destinations = [...this.#pointsModel.destinations];
     render(new Sort(), this.#mainContainer);
     render(this.#eventsList, this.#mainContainer);
 

@@ -5,21 +5,19 @@ import {destinations} from '../mock/destinations';
 const POINT_COUNT = 3;
 
 export default class PointsModel {
-  constructor() {
-    this.points = Array.from({length: POINT_COUNT}, getRandomPoint);
-    this.offers = offers;
-    this.destinations = destinations;
+  #points = Array.from({length: POINT_COUNT}, getRandomPoint);
+  #offers = offers;
+  #destinations = destinations;
+
+  get points() {
+    return this.#points;
   }
 
-  getPoints() {
-    return this.points;
+  get offers() {
+    return this.#offers;
   }
 
-  getOffers() {
-    return this.offers;
-  }
-
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 }
