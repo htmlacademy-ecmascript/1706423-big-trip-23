@@ -120,15 +120,24 @@ export default class EventEditForm extends AbstractView {
   #point = null;
   #options = null;
   #places = null;
+  #handleFormSubmit = null;
 
-  constructor({point, options, places}) {
+  constructor({point, options, places, onFormSubmit}) {
     super();
     this.#point = point;
     this.#options = options;
     this.#places = places;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
     return createEventEditFormTemplate(this.#point, this.#options, this.#places);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
