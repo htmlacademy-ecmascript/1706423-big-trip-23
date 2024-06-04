@@ -1,5 +1,5 @@
 import {FILTER_ITEMS} from '../const';
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 const createFilterItem = (item) => {
   const defaultCheckedFilter = FILTER_ITEMS[0];
@@ -24,20 +24,8 @@ const createFilterTemplate = () => `
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 
-export default class Filter {
-  getTemplate() {
+export default class Filter extends AbstractView {
+  get template() {
     return createFilterTemplate();
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

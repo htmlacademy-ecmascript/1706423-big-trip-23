@@ -1,6 +1,6 @@
 import {EVENT_TYPES, DateFormat} from '../const';
-import {createElement} from '../render';
 import {getHumanDate} from '../utils';
+import AbstractView from '../framework/view/abstract-view';
 
 const createEventType = (type, currentType = EVENT_TYPES[5]) => (`
   <div class="event__type-item">
@@ -99,6 +99,9 @@ const createEventEditFormTemplate = (point, options, places) => {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
@@ -116,26 +119,36 @@ const createEventEditFormTemplate = (point, options, places) => {
   );
 };
 
-export default class EventEditForm {
-  constructor({point, options, places}) {
-    this.point = point;
-    this.options = options;
-    this.places = places;
+export default class EventEditForm extends AbstractView {
+  #point = null;
+  #options = null;
+  #places = null;
+  #handleFormSubmit = null;
+  #handleRollupButtonClick = null;
+
+  constructor({point, options, places, onFormSubmit, onRollupButtonClick}) {
+    super();
+    this.#point = point;
+    this.#options = options;
+    this.#places = places;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupButtonClick = onRollupButtonClick;
+
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
   }
 
-  getTemplate() {
-    return createEventEditFormTemplate(this.point, this.options, this.places);
+  get template() {
+    return createEventEditFormTemplate(this.#point, this.#options, this.#places);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupButtonClick();
+  };
 }

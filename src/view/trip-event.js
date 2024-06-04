@@ -1,6 +1,6 @@
-import {createElement} from '../render';
 import {getHumanDate, getTimeInterval} from '../utils';
 import {DateFormat} from '../const';
+import AbstractView from '../framework/view/abstract-view';
 
 const createEventOffer = (offer) => (`
   <li class="event__offer">
@@ -52,26 +52,28 @@ const createTripEventTemplate = (point, options, places) => {
   );
 };
 
-export default class TripEvent {
-  constructor({point, options, places}) {
-    this.point = point;
-    this.options = options;
-    this.places = places;
+export default class TripEvent extends AbstractView {
+  #point = null;
+  #options = null;
+  #places = null;
+  #handleRollupButtonClick = null;
+
+  constructor({point, options, places, onRollupButtonClick}) {
+    super();
+    this.#point = point;
+    this.#options = options;
+    this.#places = places;
+    this.#handleRollupButtonClick = onRollupButtonClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
   }
 
-  getTemplate() {
-    return createTripEventTemplate(this.point, this.options, this.places);
+  get template() {
+    return createTripEventTemplate(this.#point, this.#options, this.#places);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupButtonClick();
+  };
 }
