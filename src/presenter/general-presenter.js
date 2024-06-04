@@ -2,7 +2,9 @@ import Sort from '../view/sort';
 import EventsList from '../view/events-list';
 import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
+import NoPoints from '../view/no-points';
 import {render, replace} from '../framework/render';
+import {MessageEmptyList} from '../const';
 
 export default class GeneralPresenter {
   #mainContainer = null;
@@ -20,15 +22,11 @@ export default class GeneralPresenter {
   }
 
   init() {
-    this.#points = [...this.#pointsModel.points];
+    this.#points = [... this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
-    render(new Sort(), this.#mainContainer);
-    render(this.#eventsList, this.#mainContainer);
 
-    for (const point of this.#points) {
-      this.#renderPoint(point);
-    }
+    this.#renderBoard();
   }
 
   #renderPoint(point) {
@@ -72,5 +70,18 @@ export default class GeneralPresenter {
     }
 
     render(tripEventComponent, this.#eventsList.element);
+  }
+
+  #renderBoard() {
+    if (this.#points.length === 0) {
+      render(new NoPoints(MessageEmptyList.EVERYTHING), this.#mainContainer);
+    } else {
+      render(new Sort(), this.#mainContainer);
+      render(this.#eventsList, this.#mainContainer);
+
+      for (const point of this.#points) {
+        this.#renderPoint(point);
+      }
+    }
   }
 }
