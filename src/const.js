@@ -1,4 +1,3 @@
-export const FILTER_ITEMS = ['everything', 'future', 'present', 'past'];
 export const SORT_ITEMS = [
   {
     id: 'day',
@@ -46,9 +45,16 @@ export const DateFormat = {
   CALENDAR_DATE: 'DD/MM/YY hh:mm',
 };
 
+export const FilterType = {
+  EVERYTHING: 'everything',
+  PAST: 'past',
+  PRESENT: 'present',
+  FUTURE: 'future',
+};
+
 export const MessageEmptyList = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  PRESENT: 'There are no present events now',
-  FUTURE: 'There are no future events now',
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now',
 };

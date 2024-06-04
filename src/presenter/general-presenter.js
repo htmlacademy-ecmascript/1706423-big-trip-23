@@ -4,7 +4,6 @@ import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
 import NoPoints from '../view/no-points';
 import {render, replace} from '../framework/render';
-import {MessageEmptyList} from '../const';
 
 export default class GeneralPresenter {
   #mainContainer = null;
@@ -15,6 +14,7 @@ export default class GeneralPresenter {
   #points = [];
   #offers = [];
   #destinations = [];
+  #filters = [];
 
   constructor({mainContainer, pointsModel}) {
     this.#mainContainer = mainContainer;
@@ -22,9 +22,10 @@ export default class GeneralPresenter {
   }
 
   init() {
-    this.#points = [... this.#pointsModel.points];
+    this.#points = [...this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
+    this.#filters = [...this.#pointsModel.filters];
 
     this.#renderBoard();
   }
@@ -34,7 +35,6 @@ export default class GeneralPresenter {
       if (evt.key === 'Escape') {
         evt.preventDefault();
         replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
 
@@ -74,7 +74,7 @@ export default class GeneralPresenter {
 
   #renderBoard() {
     if (this.#points.length === 0) {
-      render(new NoPoints(MessageEmptyList.EVERYTHING), this.#mainContainer);
+      render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer);
     } else {
       render(new Sort(), this.#mainContainer);
       render(this.#eventsList, this.#mainContainer);

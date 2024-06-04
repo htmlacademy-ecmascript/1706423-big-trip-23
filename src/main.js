@@ -8,7 +8,7 @@ const mainContainer = document.querySelector('.trip-events');
 const pointsModel = new PointsModel();
 const generalPresenter = new GeneralPresenter({mainContainer, pointsModel});
 
-render(new Filter(), filterContainer);
+render(new Filter({filters: pointsModel.filters}), filterContainer);
 
 generalPresenter.init();
 
