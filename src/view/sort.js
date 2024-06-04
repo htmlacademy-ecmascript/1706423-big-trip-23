@@ -1,5 +1,5 @@
 import {SORT_ITEMS} from '../const';
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 const createSortItem = (item) => {
   const {id, name, isClickable} = item;
@@ -25,20 +25,8 @@ const createSortTemplate = () => `
     ${SORT_ITEMS.map((item) => createSortItem(item)).join('')}
   </form>`;
 
-export default class Sort {
-  getTemplate() {
+export default class Sort extends AbstractView {
+  get template() {
     return createSortTemplate();
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

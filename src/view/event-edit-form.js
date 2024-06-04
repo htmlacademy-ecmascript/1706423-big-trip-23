@@ -1,6 +1,6 @@
 import {EVENT_TYPES, DateFormat} from '../const';
-import {createElement} from '../render';
 import {getHumanDate} from '../utils';
+import AbstractView from '../framework/view/abstract-view';
 
 const createEventType = (type, currentType = EVENT_TYPES[5]) => (`
   <div class="event__type-item">
@@ -116,26 +116,19 @@ const createEventEditFormTemplate = (point, options, places) => {
   );
 };
 
-export default class EventEditForm {
+export default class EventEditForm extends AbstractView {
+  #point = null;
+  #options = null;
+  #places = null;
+
   constructor({point, options, places}) {
-    this.point = point;
-    this.options = options;
-    this.places = places;
+    super();
+    this.#point = point;
+    this.#options = options;
+    this.#places = places;
   }
 
-  getTemplate() {
-    return createEventEditFormTemplate(this.point, this.options, this.places);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEventEditFormTemplate(this.#point, this.#options, this.#places);
   }
 }

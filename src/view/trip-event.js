@@ -1,6 +1,6 @@
-import {createElement} from '../render';
 import {getHumanDate, getTimeInterval} from '../utils';
 import {DateFormat} from '../const';
+import AbstractView from '../framework/view/abstract-view';
 
 const createEventOffer = (offer) => (`
   <li class="event__offer">
@@ -52,26 +52,19 @@ const createTripEventTemplate = (point, options, places) => {
   );
 };
 
-export default class TripEvent {
+export default class TripEvent extends AbstractView {
+  #point = null;
+  #options = null;
+  #places = null;
+
   constructor({point, options, places}) {
-    this.point = point;
-    this.options = options;
-    this.places = places;
+    super();
+    this.#point = point;
+    this.#options = options;
+    this.#places = places;
   }
 
-  getTemplate() {
-    return createTripEventTemplate(this.point, this.options, this.places);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTripEventTemplate(this.#point, this.#options, this.#places);
   }
 }
