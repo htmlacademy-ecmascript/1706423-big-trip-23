@@ -3,13 +3,14 @@ import EventsList from '../view/events-list';
 import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
 import NoPoints from '../view/no-points';
-import {render, replace} from '../framework/render';
+import {render, replace, RenderPosition} from '../framework/render';
 
 export default class GeneralPresenter {
   #mainContainer = null;
   #pointsModel = null;
 
   #eventsList = new EventsList();
+  #sortComponent = new Sort();
 
   #points = [];
   #offers = [];
@@ -28,6 +29,10 @@ export default class GeneralPresenter {
     this.#filters = [...this.#pointsModel.filters];
 
     this.#renderBoard();
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderPoint(point) {
@@ -72,16 +77,26 @@ export default class GeneralPresenter {
     render(tripEventComponent, this.#eventsList.element);
   }
 
+  #renderPoints() {
+    this.#points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderNoPoints() {
+    render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderEventsList() {
+    render(this.#eventsList, this.#mainContainer);
+    this.#renderPoints();
+  }
+
   #renderBoard() {
     if (this.#points.length === 0) {
-      render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer);
-    } else {
-      render(new Sort(), this.#mainContainer);
-      render(this.#eventsList, this.#mainContainer);
-
-      for (const point of this.#points) {
-        this.#renderPoint(point);
-      }
+      this.#renderNoPoints();
+      return;
     }
+
+    this.#renderSort();
+    this.#renderEventsList();
   }
 }
