@@ -4,6 +4,7 @@ import {render, replace, remove} from '../framework/render';
 
 export default class EventPresenter {
   #eventListContainer = null;
+  #handleDataChange = null;
 
   #tripEventComponent = null;
   #eventEditFormComponent = null;
@@ -12,8 +13,9 @@ export default class EventPresenter {
   #offers = [];
   #destinations = [];
 
-  constructor({eventListContainer}) {
+  constructor({eventListContainer, onDataChange}) {
     this.#eventListContainer = eventListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init({point, offers, destinations}) {
@@ -28,6 +30,7 @@ export default class EventPresenter {
       point: this.#point,
       options: this.#offers,
       places: this.#destinations,
+      onFavoriteClick: this.#handleFavoriteClick,
       onRollupButtonClick: this.#handleRollupButtonClick,
     });
 
@@ -82,7 +85,12 @@ export default class EventPresenter {
     this.#replacePointToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToPoint();
   };
 }

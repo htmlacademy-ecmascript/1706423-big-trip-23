@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import {getRandomArrayElement} from '../utils/utils';
+import {getRandomArrayElement} from '../utils/common';
 
 const points = [
   {

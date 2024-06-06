@@ -3,6 +3,7 @@ import EventsList from '../view/events-list';
 import NoPoints from '../view/no-points';
 import {render, RenderPosition} from '../framework/render';
 import EventPresenter from './event-presenter';
+import {updateItem} from '../utils/common';
 
 export default class GeneralPresenter {
   #mainContainer = null;
@@ -31,12 +32,24 @@ export default class GeneralPresenter {
     this.#renderBoard();
   }
 
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#eventPresenters.get(updatedPoint.id).init({
+      point: updatedPoint,
+      offers: this.#offers,
+      destinations: this.#destinations
+    });
+  };
+
   #renderSort() {
     render(this.#sortComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderPoint(point) {
-    const eventPresenter = new EventPresenter({eventListContainer: this.#eventsList.element});
+    const eventPresenter = new EventPresenter({
+      eventListContainer: this.#eventsList.element,
+      onDataChange: this.#handlePointChange,
+    });
     eventPresenter.init({point, offers: this.#offers, destinations: this.#destinations});
     this.#eventPresenters.set(point.id, eventPresenter);
   }
