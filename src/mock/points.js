@@ -1,8 +1,8 @@
-import {getRandomArrayElement} from '../utils/utils';
+import {nanoid} from 'nanoid';
+import {getRandomArrayElement} from '../utils/common';
 
 const points = [
   {
-    id: '1',
     basePrice: 5159,
     dateFrom: '2024-06-18T19:13:06.679Z',
     dateTo: '2024-06-18T20:27:06.679Z',
@@ -12,7 +12,6 @@ const points = [
     type: 'flight'
   },
   {
-    id: '2',
     basePrice: 7418,
     dateFrom: '2024-06-21T22:39:06.679Z',
     dateTo: '2024-06-23T08:37:06.679Z',
@@ -22,7 +21,6 @@ const points = [
     type: 'ship'
   },
   {
-    id: '3',
     basePrice: 5781,
     dateFrom: '2024-06-25T07:54:06.679Z',
     dateTo: '2024-06-26T15:48:06.679Z',
@@ -33,6 +31,9 @@ const points = [
   },
 ];
 
-const getRandomPoint = () => getRandomArrayElement(points);
+const getRandomPoint = () => ({
+  ...getRandomArrayElement(points),
+  id: nanoid(),
+});
 
 export {getRandomPoint};

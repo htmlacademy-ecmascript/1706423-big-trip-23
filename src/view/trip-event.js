@@ -1,4 +1,4 @@
-import {getHumanDate, getTimeInterval} from '../utils/utils';
+import {getHumanDate, getTimeInterval} from '../utils/event';
 import {DateFormat} from '../const';
 import AbstractView from '../framework/view/abstract-view';
 
@@ -57,15 +57,18 @@ export default class TripEvent extends AbstractView {
   #options = null;
   #places = null;
   #handleRollupButtonClick = null;
+  #handleFavoriteClick = null;
 
-  constructor({point, options, places, onRollupButtonClick}) {
+  constructor({point, options, places, onRollupButtonClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#options = options;
     this.#places = places;
     this.#handleRollupButtonClick = onRollupButtonClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {
@@ -75,5 +78,10 @@ export default class TripEvent extends AbstractView {
   #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupButtonClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }

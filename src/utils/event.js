@@ -1,9 +1,5 @@
 import dayjs from 'dayjs';
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
 function getHumanDate(date, format) {
   return dayjs(date).format(format);
 }
@@ -37,4 +33,4 @@ function getDefaultPoint() {
   };
 }
 
-export {getRandomArrayElement, getHumanDate, getTimeInterval, getDefaultPoint};
+export {getHumanDate, getTimeInterval, getDefaultPoint};

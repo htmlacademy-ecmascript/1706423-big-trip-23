@@ -1,5 +1,5 @@
 import {EVENT_TYPES, DateFormat} from '../const';
-import {getHumanDate} from '../utils/utils';
+import {getHumanDate} from '../utils/event';
 import AbstractView from '../framework/view/abstract-view';
 
 const createEventType = (type, currentType = EVENT_TYPES[5]) => (`
@@ -144,7 +144,7 @@ export default class EventEditForm extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
   #rollupButtonClickHandler = (evt) => {
