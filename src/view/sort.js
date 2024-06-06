@@ -5,15 +5,15 @@ const createSortItem = (item) => {
   const {id, name, isClickable} = item;
   const defaultCheckedSortId = SORT_ITEMS[0].id;
   return (`
-    <div class="trip-sort__item  trip-sort__item--${id}">
+    <div class="trip-sort__item  trip-sort__item--${id}" data-sort-type="${id}">
       <input
         id="sort-${id}"
         class="trip-sort__input visually-hidden"
         type="radio"
         name="trip-sort"
         value="sort-${id}"
-        ${id === defaultCheckedSortId && 'checked'}
-        ${!isClickable && 'disabled'}
+        ${id === defaultCheckedSortId ? 'checked' : ''}
+        ${!isClickable ? 'disabled' : ''}
       />
       <label class="trip-sort__btn" for="sort-${id}">${name}</label>
     </div>`
@@ -26,7 +26,21 @@ const createSortTemplate = () => `
   </form>`;
 
 export default class Sort extends AbstractView {
+  #handleSortTypeChange = null;
+
+  constructor({onSortTypeChange}) {
+    super();
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  }
+
   get template() {
     return createSortTemplate();
   }
+
+  #sortTypeChangeHandler = (evt) => {
+    const parent = evt.target.closest('.trip-sort__item');
+    this.#handleSortTypeChange(parent.dataset.sortType);
+  };
 }
