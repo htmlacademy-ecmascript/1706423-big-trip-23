@@ -1,6 +1,6 @@
 import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
-import {render, replace} from '../framework/render';
+import {render, replace, remove} from '../framework/render';
 
 export default class EventPresenter {
   #eventListContainer = null;
@@ -21,28 +21,44 @@ export default class EventPresenter {
     this.#offers = offers;
     this.#destinations = destinations;
 
+    const prevTripEventComponent = this.#tripEventComponent;
+    const prevEventEditFormComponent = this.#eventEditFormComponent;
+
     this.#tripEventComponent = new TripEvent({
       point: this.#point,
       options: this.#offers,
       places: this.#destinations,
-      onRollupButtonClick: () => {
-        this.#replacePointToForm();
-      }
+      onRollupButtonClick: this.#handleRollupButtonClick,
     });
 
     this.#eventEditFormComponent = new EventEditForm({
       point: this.#point,
       options: this.#offers,
       places: this.#destinations,
-      onFormSubmit: () => {
-        this.#replaceFormToPoint();
-      },
-      onRollupButtonClick: () => {
-        this.#replaceFormToPoint();
-      }
+      onFormSubmit: this.#handleFormSubmit,
+      onRollupButtonClick: this.#handleRollupButtonClick,
     });
 
-    render(this.#tripEventComponent, this.#eventListContainer);
+    if (prevTripEventComponent === null || prevEventEditFormComponent === null) {
+      render(this.#tripEventComponent, this.#eventListContainer);
+      return;
+    }
+
+    if (this.#eventListContainer.contains(prevTripEventComponent.element)) {
+      replace(this.#tripEventComponent, prevTripEventComponent);
+    }
+
+    if (this.#eventListContainer.contains(prevEventEditFormComponent.element)) {
+      replace(this.#tripEventComponent, prevEventEditFormComponent);
+    }
+
+    remove(prevTripEventComponent);
+    remove(prevEventEditFormComponent);
+  }
+
+  destroy() {
+    remove(this.#tripEventComponent);
+    remove(this.#eventEditFormComponent);
   }
 
   #replacePointToForm() {
@@ -60,5 +76,13 @@ export default class EventPresenter {
       evt.preventDefault();
       this.#replaceFormToPoint();
     }
+  };
+
+  #handleRollupButtonClick = () => {
+    this.#replacePointToForm();
+  };
+
+  #handleFormSubmit = () => {
+    this.#replaceFormToPoint();
   };
 }
