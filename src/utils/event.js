@@ -33,4 +33,15 @@ function getDefaultPoint() {
   };
 }
 
-export {getHumanDate, getTimeInterval, getDefaultPoint};
+function sortPointTime(pointA, pointB) {
+  const intervalA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+  const intervalB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
+
+  return intervalB - intervalA;
+}
+
+function sortPointPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
+}
+
+export {getHumanDate, getTimeInterval, getDefaultPoint, sortPointTime, sortPointPrice};
