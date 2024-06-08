@@ -35,7 +35,7 @@ export default class EventPresenter {
       options: this.#offers,
       places: this.#destinations,
       onFavoriteClick: this.#handleFavoriteClick,
-      onRollupButtonClick: this.#handleRollupButtonClick,
+      onRollupButtonClick: this.#handleEditFormOpen,
     });
 
     this.#eventEditFormComponent = new EventEditForm({
@@ -43,7 +43,7 @@ export default class EventPresenter {
       options: this.#offers,
       places: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
-      onRollupButtonClick: this.#handleRollupButtonClick,
+      onRollupButtonClick: this.#handleEditFormClose,
     });
 
     if (prevTripEventComponent === null || prevEventEditFormComponent === null) {
@@ -56,7 +56,7 @@ export default class EventPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#tripEventComponent, prevEventEditFormComponent);
+      replace(this.#eventEditFormComponent, prevEventEditFormComponent);
     }
 
     remove(prevTripEventComponent);
@@ -70,6 +70,7 @@ export default class EventPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#eventEditFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -90,12 +91,18 @@ export default class EventPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#eventEditFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
 
-  #handleRollupButtonClick = () => {
+  #handleEditFormOpen = () => {
     this.#replacePointToForm();
+  };
+
+  #handleEditFormClose = () => {
+    this.#eventEditFormComponent.reset(this.#point);
+    this.#replaceFormToPoint();
   };
 
   #handleFavoriteClick = () => {
