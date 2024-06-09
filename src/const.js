@@ -40,9 +40,9 @@ export const EVENT_TYPES = [
 export const DateFormat = {
   DATE: 'MMM D',
   DATE_WITH_YEAR: 'YYYY-MM-DD',
-  TIME: 'hh:mm',
+  TIME: 'HH:mm',
   DATE_TIME: 'YYYY-MM-DDTHH:mm',
-  CALENDAR_DATE: 'DD/MM/YY hh:mm',
+  CALENDAR_DATE: 'DD/MM/YY HH:mm',
 };
 
 export const FilterType = {
