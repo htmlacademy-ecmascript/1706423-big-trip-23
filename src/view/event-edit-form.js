@@ -1,3 +1,5 @@
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import {EVENT_TYPES, DateFormat} from '../const';
 import {getHumanDate} from '../utils/event';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
@@ -126,6 +128,7 @@ export default class EventEditForm extends AbstractStatefulView {
   #places = null;
   #handleFormSubmit = null;
   #handleRollupButtonClick = null;
+  #datepicker = null;
 
   constructor({point, options, places, onFormSubmit, onRollupButtonClick}) {
     super();
@@ -155,6 +158,9 @@ export default class EventEditForm extends AbstractStatefulView {
     this.element.querySelector('#event-destination-1').addEventListener('change', this.#handleDestinationChange);
     this.element.querySelector('#event-price-1').addEventListener('change', this.#handlePriceChange);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#handleOfferChange);
+
+    this.#setDatepicker(this.element.querySelector('#event-start-time-1'), this._state.dateFrom, this.#dateFromChangeHandler);
+    this.#setDatepicker(this.element.querySelector('#event-end-time-1'), this._state.dateTo, this.#dateToChangeHandler, this._state.dateFrom);
   }
 
   #formSubmitHandler = (evt) => {
@@ -183,6 +189,18 @@ export default class EventEditForm extends AbstractStatefulView {
     this.updateElement({destination: selectedDestination.id});
   };
 
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
   #handlePriceChange = (evt) => {
     evt.preventDefault();
     this.updateElement({basePrice: evt.target.value});
@@ -198,6 +216,19 @@ export default class EventEditForm extends AbstractStatefulView {
         : [...this._state.offers.filter((id) => id !== offerId)]
     });
   };
+
+  #setDatepicker(element, date, cb, minDate = false) {
+    this.#datepicker = flatpickr(element,
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: date,
+        onChange: cb,
+        minDate: minDate,
+      },
+    );
+  }
 
   static parsePointToState(point) {
     return {...point};
