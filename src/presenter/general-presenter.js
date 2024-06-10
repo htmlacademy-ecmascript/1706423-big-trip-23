@@ -3,7 +3,6 @@ import EventsList from '../view/events-list';
 import NoPoints from '../view/no-points';
 import {render, RenderPosition} from '../framework/render';
 import EventPresenter from './event-presenter';
-import {updateItem} from '../utils/common';
 import {sortPointTime, sortPointPrice} from '../utils/event';
 import {SortType} from '../const';
 
@@ -14,25 +13,40 @@ export default class GeneralPresenter {
   #eventsList = new EventsList();
   #sortComponent = null;
 
-  #points = [];
   #offers = [];
   #destinations = [];
   #filters = [];
   #eventPresenters = new Map();
   #currentSortType = SortType.DAY;
-  #sourcedPoints = [];
 
   constructor({mainContainer, pointsModel}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    switch (this.#currentSortType) {
+      case SortType.TIME:
+        return [...this.#pointsModel.points].sort(sortPointTime);
+      case SortType.PRICE:
+        return [...this.#pointsModel.points].sort(sortPointPrice);
+    }
+
+    return this.#pointsModel.points;
+  }
+
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
+  get destinations() {
+    return this.#pointsModel.destinations;
+  }
+
   init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#offers = [...this.#pointsModel.offers];
-    this.#destinations = [...this.#pointsModel.destinations];
+    this.#offers = this.offers;
+    this.#destinations = this.destinations;
     this.#filters = [...this.#pointsModel.filters];
-    this.#sourcedPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -42,8 +56,6 @@ export default class GeneralPresenter {
   };
 
   #handlePointChange = (updatedPoint) => {
-    this.#points = updateItem(this.#points, updatedPoint);
-    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
     this.#eventPresenters.get(updatedPoint.id).init({
       point: updatedPoint,
       offers: this.#offers,
@@ -51,30 +63,12 @@ export default class GeneralPresenter {
     });
   };
 
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.TIME:
-        this.#points.sort(sortPointTime);
-        break;
-      case SortType.PRICE:
-        this.#points.sort(sortPointPrice);
-        break;
-      case SortType.EVENT:
-      case SortType.OFFERS:
-        break;
-      default:
-        this.#points = [...this.#sourcedPoints];
-    }
-
-    this.#currentSortType = sortType;
-  }
-
   #handleSortTypeChange = (sortType) => {
     if (sortType === this.#currentSortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearEventsList();
     this.#renderEventsList();
   };
@@ -97,8 +91,8 @@ export default class GeneralPresenter {
     this.#eventPresenters.set(point.id, eventPresenter);
   }
 
-  #renderPoints() {
-    this.#points.forEach((point) => this.#renderPoint(point));
+  #renderPoints(points) {
+    points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderNoPoints() {
@@ -112,11 +106,11 @@ export default class GeneralPresenter {
 
   #renderEventsList() {
     render(this.#eventsList, this.#mainContainer);
-    this.#renderPoints();
+    this.#renderPoints(this.points);
   }
 
   #renderBoard() {
-    if (this.#points.length === 0) {
+    if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
