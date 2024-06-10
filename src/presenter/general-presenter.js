@@ -4,7 +4,7 @@ import NoPoints from '../view/no-points';
 import {render, RenderPosition, remove} from '../framework/render';
 import EventPresenter from './event-presenter';
 import {sortPointTime, sortPointPrice} from '../utils/event';
-import {SortType, UpdateType, UserAction} from '../const';
+import {FILTER_ITEMS, SortType, UpdateType, UserAction} from '../const';
 
 export default class GeneralPresenter {
   #mainContainer = null;
@@ -48,7 +48,6 @@ export default class GeneralPresenter {
   init() {
     this.#offers = this.offers;
     this.#destinations = this.destinations;
-    this.#filters = [...this.#pointsModel.filters];
 
     this.#renderBoard();
   }
@@ -125,7 +124,7 @@ export default class GeneralPresenter {
   }
 
   #renderNoPoints() {
-    render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer, RenderPosition.AFTERBEGIN);
+    render(new NoPoints({filter: FILTER_ITEMS[0].name}), this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
   #clearBoard({resetSortType = false} = {}) {

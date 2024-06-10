@@ -1,3 +1,21 @@
+export const FILTER_ITEMS = [
+  {
+    type: 'everything',
+    count: 3,
+  },
+  {
+    type: 'past',
+    count: 0,
+  },
+  {
+    type: 'present',
+    count: 0,
+  },
+  {
+    type: 'future',
+    count: 3,
+  },
+];
 export const SORT_ITEMS = [
   {
     id: 'day',
