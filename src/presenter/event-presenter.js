@@ -2,6 +2,7 @@ import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
 import {render, replace, remove} from '../framework/render';
 import {Mode, UpdateType, UserAction} from '../const';
+import {isDatesEqual} from '../utils/event';
 
 export default class EventPresenter {
   #eventListContainer = null;
@@ -44,6 +45,7 @@ export default class EventPresenter {
       places: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
       onRollupButtonClick: this.#handleEditFormClose,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevTripEventComponent === null || prevEventEditFormComponent === null) {
@@ -113,12 +115,23 @@ export default class EventPresenter {
     );
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom) || !isDatesEqual(this.#point.dateTo, update.dateTo);
+
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      point
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update
     );
     this.#replaceFormToPoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }

@@ -44,4 +44,8 @@ function sortPointPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {getHumanDate, getTimeInterval, getDefaultPoint, sortPointTime, sortPointPrice};
+function isDatesEqual(dateA, dateB) {
+  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB);
+}
+
+export {getHumanDate, getTimeInterval, getDefaultPoint, sortPointTime, sortPointPrice, isDatesEqual};
