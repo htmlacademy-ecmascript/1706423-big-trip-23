@@ -1,19 +1,15 @@
 import GeneralPresenter from './presenter/general-presenter';
-import Filter from './view/filter';
 import PointsModel from './model/points-model';
-import {render} from './framework/render';
-import {FILTER_ITEMS, FilterType} from './const';
+import FilterModel from './model/filter-model';
+import FilterPresenter from './presenter/filter-presenter';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
 const mainContainer = document.querySelector('.trip-events');
 const pointsModel = new PointsModel();
+const filterModel = new FilterModel();
 const generalPresenter = new GeneralPresenter({mainContainer, pointsModel});
+const filterPresenter = new FilterPresenter({filterContainer, filterModel, pointsModel});
 
-render(new Filter({
-  filters: FILTER_ITEMS,
-  currentFilterType: FilterType.EVERYTHING,
-  onFilterTypeChange: () => {}
-}), filterContainer);
-
+filterPresenter.init();
 generalPresenter.init();
 
