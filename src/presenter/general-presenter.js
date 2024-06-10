@@ -4,7 +4,7 @@ import NoPoints from '../view/no-points';
 import {render, RenderPosition, remove} from '../framework/render';
 import EventPresenter from './event-presenter';
 import {sortPointTime, sortPointPrice} from '../utils/event';
-import {SortType, UpdateType, UserAction} from '../const';
+import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import {filter} from '../utils/filter';
 
 export default class GeneralPresenter {
@@ -14,12 +14,13 @@ export default class GeneralPresenter {
 
   #eventsList = new EventsList();
   #sortComponent = null;
+  #noPointsComponent = null;
 
   #offers = [];
   #destinations = [];
-  #filters = [];
   #eventPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({mainContainer, pointsModel, filterModel}) {
     this.#mainContainer = mainContainer;
@@ -31,9 +32,9 @@ export default class GeneralPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -92,8 +93,8 @@ export default class GeneralPresenter {
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        this.#clearBoard();
-        this.#renderBoard({resetSortType: true});
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
         break;
     }
   };
@@ -132,7 +133,8 @@ export default class GeneralPresenter {
   }
 
   #renderNoPoints() {
-    render(new NoPoints({filter: filter[this.#filterModel.filter]}), this.#mainContainer, RenderPosition.AFTERBEGIN);
+    this.#noPointsComponent = new NoPoints({filterType: this.#filterType});
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
   #clearBoard({resetSortType = false} = {}) {
@@ -140,6 +142,10 @@ export default class GeneralPresenter {
     this.#eventPresenters.clear();
 
     remove(this.#sortComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
@@ -151,7 +157,6 @@ export default class GeneralPresenter {
       this.#renderNoPoints();
       return;
     }
-
     this.#renderSort();
     render(this.#eventsList, this.#mainContainer);
     this.#renderPoints(this.points);
