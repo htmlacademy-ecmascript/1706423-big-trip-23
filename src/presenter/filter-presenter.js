@@ -24,7 +24,7 @@ export default class FilterPresenter {
 
     return Object.values(FilterType).map((type) => ({
       type,
-      count: filter[type](points),
+      count: filter[type](points).length,
     }));
   }
 
@@ -35,7 +35,7 @@ export default class FilterPresenter {
 
     this.#filterComponent = new Filter({
       filters,
-      currentFilter: this.#filterModel.filter,
+      currentFilterType: this.#filterModel.filter,
       onFilterTypeChange: this.#handleFilterTypeChange,
     });
 

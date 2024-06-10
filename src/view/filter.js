@@ -27,20 +27,20 @@ const createFilterTemplate = (filterItems, currentFilterType) => `
 
 export default class Filter extends AbstractView {
   #filters = null;
-  #currentFilter = null;
+  #currentFilterType = null;
   #handleFilterTypeChange = null;
 
   constructor({filters, currentFilterType, onFilterTypeChange}) {
     super();
     this.#filters = filters;
-    this.#currentFilter = currentFilterType;
+    this.#currentFilterType = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;
 
     this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
-    return createFilterTemplate(this.#filters, this.#currentFilter);
+    return createFilterTemplate(this.#filters, this.#currentFilterType);
   }
 
   #filterTypeChangeHandler = (evt) => {

@@ -4,11 +4,13 @@ import NoPoints from '../view/no-points';
 import {render, RenderPosition, remove} from '../framework/render';
 import EventPresenter from './event-presenter';
 import {sortPointTime, sortPointPrice} from '../utils/event';
-import {FILTER_ITEMS, SortType, UpdateType, UserAction} from '../const';
+import {SortType, UpdateType, UserAction} from '../const';
+import {filter} from '../utils/filter';
 
 export default class GeneralPresenter {
   #mainContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #eventsList = new EventsList();
   #sortComponent = null;
@@ -19,22 +21,28 @@ export default class GeneralPresenter {
   #eventPresenters = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor({mainContainer, pointsModel}) {
+  constructor({mainContainer, pointsModel, filterModel}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortPointTime);
+        return [...filteredPoints].sort(sortPointTime);
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortPointPrice);
+        return [...filteredPoints].sort(sortPointPrice);
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   get offers() {
@@ -124,7 +132,7 @@ export default class GeneralPresenter {
   }
 
   #renderNoPoints() {
-    render(new NoPoints({filter: FILTER_ITEMS[0].name}), this.#mainContainer, RenderPosition.AFTERBEGIN);
+    render(new NoPoints({filter: filter[this.#filterModel.filter]}), this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
   #clearBoard({resetSortType = false} = {}) {
