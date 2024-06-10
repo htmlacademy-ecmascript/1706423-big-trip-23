@@ -1,7 +1,7 @@
 import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
 import {render, replace, remove} from '../framework/render';
-import {Mode} from '../const';
+import {Mode, UpdateType, UserAction} from '../const';
 
 export default class EventPresenter {
   #eventListContainer = null;
@@ -106,11 +106,19 @@ export default class EventPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
     this.#replaceFormToPoint();
   };
 }

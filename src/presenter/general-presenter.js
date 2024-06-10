@@ -1,10 +1,10 @@
 import Sort from '../view/sort';
 import EventsList from '../view/events-list';
 import NoPoints from '../view/no-points';
-import {render, RenderPosition} from '../framework/render';
+import {render, RenderPosition, remove} from '../framework/render';
 import EventPresenter from './event-presenter';
 import {sortPointTime, sortPointPrice} from '../utils/event';
-import {SortType} from '../const';
+import {SortType, UpdateType, UserAction} from '../const';
 
 export default class GeneralPresenter {
   #mainContainer = null;
@@ -22,6 +22,8 @@ export default class GeneralPresenter {
   constructor({mainContainer, pointsModel}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -55,12 +57,38 @@ export default class GeneralPresenter {
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedPoint) => {
-    this.#eventPresenters.get(updatedPoint.id).init({
-      point: updatedPoint,
-      offers: this.#offers,
-      destinations: this.#destinations
-    });
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#eventPresenters.get(data.id).init({
+          point: data,
+          offers: this.#offers,
+          destinations: this.#destinations
+        });
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard();
+        this.#renderBoard({resetSortType: true});
+        break;
+    }
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -69,12 +97,13 @@ export default class GeneralPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearEventsList();
-    this.#renderEventsList();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 
   #renderSort() {
     this.#sortComponent = new Sort({
+      currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange,
     });
 
@@ -84,7 +113,7 @@ export default class GeneralPresenter {
   #renderPoint(point) {
     const eventPresenter = new EventPresenter({
       eventListContainer: this.#eventsList.element,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
     eventPresenter.init({point, offers: this.#offers, destinations: this.#destinations});
@@ -99,14 +128,15 @@ export default class GeneralPresenter {
     render(new NoPoints({filter: this.#filters[0]}), this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #clearEventsList() {
+  #clearBoard({resetSortType = false} = {}) {
     this.#eventPresenters.forEach((presenter) => presenter.destroy());
     this.#eventPresenters.clear();
-  }
 
-  #renderEventsList() {
-    render(this.#eventsList, this.#mainContainer);
-    this.#renderPoints(this.points);
+    remove(this.#sortComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
   }
 
   #renderBoard() {
@@ -116,6 +146,7 @@ export default class GeneralPresenter {
     }
 
     this.#renderSort();
-    this.#renderEventsList();
+    render(this.#eventsList, this.#mainContainer);
+    this.#renderPoints(this.points);
   }
 }
