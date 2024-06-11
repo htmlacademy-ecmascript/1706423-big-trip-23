@@ -55,6 +55,11 @@ export const EVENT_TYPES = [
   'restaurant'
 ];
 
+export const DEFAULT_POINT = {
+  offers: [],
+  type: 'flight'
+};
+
 export const DateFormat = {
   DATE: 'MMM D',
   DATE_WITH_YEAR: 'YYYY-MM-DD',

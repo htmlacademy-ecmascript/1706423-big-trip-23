@@ -1,9 +1,10 @@
 import Sort from '../view/sort';
 import EventsList from '../view/events-list';
 import NoPoints from '../view/no-points';
-import {render, RenderPosition, remove} from '../framework/render';
 import EventPresenter from './event-presenter';
-import {sortPointTime, sortPointPrice} from '../utils/event';
+import NewEventPresenter from './new-event-presenter';
+import {render, RenderPosition, remove} from '../framework/render';
+import {sortBy} from '../utils/sort';
 import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import {filter} from '../utils/filter';
 
@@ -19,13 +20,19 @@ export default class GeneralPresenter {
   #offers = [];
   #destinations = [];
   #eventPresenters = new Map();
+  #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
-  constructor({mainContainer, pointsModel, filterModel}) {
+  constructor({mainContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#newEventPresenter = new NewEventPresenter({
+      eventListContainer: this.#eventsList.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy,
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -35,15 +42,9 @@ export default class GeneralPresenter {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
     const filteredPoints = filter[this.#filterType](points);
+    const sortedPoints = sortBy[this.#currentSortType](filteredPoints);
 
-    switch (this.#currentSortType) {
-      case SortType.TIME:
-        return [...filteredPoints].sort(sortPointTime);
-      case SortType.PRICE:
-        return [...filteredPoints].sort(sortPointPrice);
-    }
-
-    return filteredPoints;
+    return sortedPoints;
   }
 
   get offers() {
@@ -61,7 +62,14 @@ export default class GeneralPresenter {
     this.#renderBoard();
   }
 
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newEventPresenter.init({offers: this.#offers, destinations: this.#destinations});
+  }
+
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -138,6 +146,7 @@ export default class GeneralPresenter {
   }
 
   #clearBoard({resetSortType = false} = {}) {
+    this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.destroy());
     this.#eventPresenters.clear();
 

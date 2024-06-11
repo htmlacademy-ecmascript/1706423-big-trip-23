@@ -25,27 +25,8 @@ function getTimeInterval(dateFrom, dateTo) {
   return result;
 }
 
-function getDefaultPoint() {
-  return {
-    destination: '5bbd083d-e0ec-451a-b146-f6343f63aa63',
-    offers: [],
-    type: 'flight'
-  };
-}
-
-function sortPointTime(pointA, pointB) {
-  const intervalA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
-  const intervalB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
-
-  return intervalB - intervalA;
-}
-
-function sortPointPrice(pointA, pointB) {
-  return pointB.basePrice - pointA.basePrice;
-}
-
 function isDatesEqual(dateA, dateB) {
   return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB);
 }
 
-export {getHumanDate, getTimeInterval, getDefaultPoint, sortPointTime, sortPointPrice, isDatesEqual};
+export {getHumanDate, getTimeInterval, isDatesEqual};
