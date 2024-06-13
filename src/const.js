@@ -106,3 +106,8 @@ export const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
 };
+
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};

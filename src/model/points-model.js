@@ -6,9 +6,19 @@ import {destinations} from '../mock/destinations';
 const POINT_COUNT = 3;
 
 export default class PointsModel extends Observable {
+  #dataApiService = null;
   #points = Array.from({length: POINT_COUNT}, getRandomPoint);
   #offers = offers;
   #destinations = destinations;
+
+  constructor({dataApiService}) {
+    super();
+    this.#dataApiService = dataApiService;
+
+    this.#dataApiService.points.then((points) => {
+      console.log(points);
+    });
+  }
 
   get points() {
     return this.#points;
