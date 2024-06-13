@@ -1,3 +1,21 @@
+export const FILTER_ITEMS = [
+  {
+    type: 'everything',
+    count: 3,
+  },
+  {
+    type: 'past',
+    count: 0,
+  },
+  {
+    type: 'present',
+    count: 0,
+  },
+  {
+    type: 'future',
+    count: 3,
+  },
+];
 export const SORT_ITEMS = [
   {
     id: 'day',
@@ -37,6 +55,11 @@ export const EVENT_TYPES = [
   'restaurant'
 ];
 
+export const DEFAULT_POINT = {
+  offers: [],
+  type: 'flight'
+};
+
 export const DateFormat = {
   DATE: 'MMM D',
   DATE_WITH_YEAR: 'YYYY-MM-DD',
@@ -70,4 +93,16 @@ export const SortType = {
   TIME: 'time',
   PRICE: 'price',
   OFFERS: 'offer',
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
