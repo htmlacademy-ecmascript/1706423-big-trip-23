@@ -40,4 +40,5 @@ render(newEventButton, headerContainer, RenderPosition.BEFOREEND);
 
 filterPresenter.init();
 generalPresenter.init();
+pointsModel.init();
 

@@ -1,23 +1,14 @@
 import Observable from '../framework/observable';
-import {getRandomPoint} from '../mock/points';
-import {offers} from '../mock/offers';
-import {destinations} from '../mock/destinations';
-
-const POINT_COUNT = 3;
 
 export default class PointsModel extends Observable {
   #dataApiService = null;
-  #points = Array.from({length: POINT_COUNT}, getRandomPoint);
-  #offers = offers;
-  #destinations = destinations;
+  #points = [];
+  #offers = [];
+  #destinations = [];
 
   constructor({dataApiService}) {
     super();
     this.#dataApiService = dataApiService;
-
-    this.#dataApiService.points.then((points) => {
-      console.log(points.map(this.#adaptPointToClient));
-    });
   }
 
   get points() {
@@ -30,6 +21,19 @@ export default class PointsModel extends Observable {
 
   get destinations() {
     return this.#destinations;
+  }
+
+  async init() {
+    try {
+      const points = await this.#dataApiService.points;
+      this.#points = points.map(this.#adaptPointToClient);
+      this.#offers = await this.#dataApiService.offers;
+      this.#destinations = await this.#dataApiService.destinations;
+    } catch(err) {
+      this.#points = [];
+      this.#offers = [];
+      this.#destinations = [];
+    }
   }
 
   updatePoint(updateType, updatePoint) {
