@@ -36,9 +36,10 @@ function handleNewPointButtonClick() {
   newEventButton.element.disabled = true;
 }
 
-render(newEventButton, headerContainer, RenderPosition.BEFOREEND);
-
 filterPresenter.init();
 generalPresenter.init();
-pointsModel.init();
+pointsModel.init()
+  .finally(() => {
+    render(newEventButton, headerContainer, RenderPosition.BEFOREEND);
+  });
 

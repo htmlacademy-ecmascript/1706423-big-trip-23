@@ -1,4 +1,5 @@
 import Observable from '../framework/observable';
+import {UpdateType} from '../const';
 
 export default class PointsModel extends Observable {
   #dataApiService = null;
@@ -34,6 +35,8 @@ export default class PointsModel extends Observable {
       this.#offers = [];
       this.#destinations = [];
     }
+
+    this._notify(UpdateType.INIT);
   }
 
   updatePoint(updateType, updatePoint) {
