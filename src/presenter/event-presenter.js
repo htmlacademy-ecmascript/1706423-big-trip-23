@@ -58,7 +58,8 @@ export default class EventPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#eventEditFormComponent, prevEventEditFormComponent);
+      replace(this.#tripEventComponent, prevEventEditFormComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevTripEventComponent);
@@ -74,6 +75,24 @@ export default class EventPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#eventEditFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
+    }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditFormComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditFormComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
     }
   }
 
@@ -124,7 +143,6 @@ export default class EventPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update
     );
-    this.#replaceFormToPoint();
   };
 
   #handleDeleteClick = (point) => {

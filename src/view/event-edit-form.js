@@ -136,7 +136,7 @@ const createEventEditFormTemplate = (point, options, places) => {
             ${isSaving ? 'Saving...' : 'Save'}
           </button>
           <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
-            ${id ? `${isDeleting ? 'Deleting' : 'Delete'}` : 'Cancel'}
+            ${id ? `${isDeleting ? 'Deleting...' : 'Delete'}` : 'Cancel'}
           </button>
           ${id ? `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}><span class="visually-hidden">Open event</span></button>` : ''}
         </header>
@@ -203,7 +203,7 @@ export default class EventEditForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EventEditForm.parsePointToState(this._state));
+    this.#handleFormSubmit(EventEditForm.parseStateToPoint(this._state));
   };
 
   #formDeleteClickHandler = (evt) => {
