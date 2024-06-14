@@ -15,8 +15,8 @@ export default class DataApiService extends ApiService {
   }
 
   async updatePoint(point) {
-    const response = this._load({
-      url: 'points',
+    const response = await this._load({
+      url: `points/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(this.#adaptPointToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
