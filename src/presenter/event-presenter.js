@@ -96,6 +96,23 @@ export default class EventPresenter {
     }
   }
 
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#eventEditFormComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#eventEditFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditFormComponent.shake(resetFormState);
+  }
+
   #replacePointToForm() {
     replace(this.#eventEditFormComponent, this.#tripEventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);

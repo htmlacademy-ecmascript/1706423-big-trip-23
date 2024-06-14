@@ -57,6 +57,18 @@ export default class NewEventPresenter {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventEditFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditFormComponent.shake(resetFormState);
+  }
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
