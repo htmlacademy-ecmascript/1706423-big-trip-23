@@ -210,7 +210,7 @@ export default class EventEditForm extends AbstractStatefulView {
 
   #handlePriceChange = (evt) => {
     evt.preventDefault();
-    this.updateElement({basePrice: evt.target.value});
+    this.updateElement({basePrice: Number(evt.target.value)});
   };
 
   #handleOfferChange = (evt) => {

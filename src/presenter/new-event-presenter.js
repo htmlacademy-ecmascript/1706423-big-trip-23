@@ -1,7 +1,6 @@
 import EventEditForm from '../view/event-edit-form';
 import {render, remove, RenderPosition} from '../framework/render';
 import {UpdateType, UserAction} from '../const';
-import {nanoid} from 'nanoid';
 
 export default class NewEventPresenter {
   #eventListContainer = null;
@@ -62,7 +61,7 @@ export default class NewEventPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point}
+      point,
     );
     this.destroy();
   };
