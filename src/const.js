@@ -57,7 +57,8 @@ export const EVENT_TYPES = [
 
 export const DEFAULT_POINT = {
   offers: [],
-  type: 'flight'
+  type: 'flight',
+  isFavorite: false,
 };
 
 export const DateFormat = {
@@ -105,4 +106,12 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+};
+
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };

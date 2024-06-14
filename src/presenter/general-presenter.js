@@ -3,6 +3,7 @@ import EventsList from '../view/events-list';
 import NoPoints from '../view/no-points';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
+import Loader from '../view/loader';
 import {render, RenderPosition, remove} from '../framework/render';
 import {sortBy} from '../utils/sort';
 import {FilterType, SortType, UpdateType, UserAction} from '../const';
@@ -16,13 +17,13 @@ export default class GeneralPresenter {
   #eventsList = new EventsList();
   #sortComponent = null;
   #noPointsComponent = null;
+  #loaderComponent = new Loader();
 
-  #offers = [];
-  #destinations = [];
   #eventPresenters = new Map();
   #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor({mainContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#mainContainer = mainContainer;
@@ -56,16 +57,13 @@ export default class GeneralPresenter {
   }
 
   init() {
-    this.#offers = this.offers;
-    this.#destinations = this.destinations;
-
     this.#renderBoard();
   }
 
   createPoint() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newEventPresenter.init({offers: this.#offers, destinations: this.#destinations});
+    this.#newEventPresenter.init({offers: this.offers, destinations: this.destinations});
   }
 
   #handleModeChange = () => {
@@ -92,8 +90,8 @@ export default class GeneralPresenter {
       case UpdateType.PATCH:
         this.#eventPresenters.get(data.id).init({
           point: data,
-          offers: this.#offers,
-          destinations: this.#destinations
+          offers: this.offers,
+          destinations: this.destinations
         });
         break;
       case UpdateType.MINOR:
@@ -102,6 +100,11 @@ export default class GeneralPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loaderComponent);
         this.#renderBoard();
         break;
     }
@@ -132,12 +135,16 @@ export default class GeneralPresenter {
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
-    eventPresenter.init({point, offers: this.#offers, destinations: this.#destinations});
+    eventPresenter.init({point, offers: this.offers, destinations: this.destinations});
     this.#eventPresenters.set(point.id, eventPresenter);
   }
 
   #renderPoints(points) {
     points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderLoading() {
+    render(this.#loaderComponent, this.#mainContainer, RenderPosition.BEFOREEND);
   }
 
   #renderNoPoints() {
@@ -151,6 +158,7 @@ export default class GeneralPresenter {
     this.#eventPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loaderComponent);
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
@@ -162,10 +170,16 @@ export default class GeneralPresenter {
   }
 
   #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
+
     this.#renderSort();
     render(this.#eventsList, this.#mainContainer);
     this.#renderPoints(this.points);
