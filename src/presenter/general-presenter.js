@@ -176,6 +176,11 @@ export default class GeneralPresenter {
     render(this.#noPointsComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
   }
 
+  #renderErrorMessage() {
+    this.#noPointsComponent = new NoPoints({});
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
+  }
+
   #clearBoard({resetSortType = false} = {}) {
     this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.destroy());
@@ -196,6 +201,11 @@ export default class GeneralPresenter {
   #renderBoard() {
     if (this.#isLoading) {
       this.#renderLoading();
+      return;
+    }
+
+    if (this.#pointsModel.isError) {
+      this.#renderErrorMessage();
       return;
     }
 

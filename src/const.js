@@ -83,6 +83,8 @@ export const MessageEmptyList = {
   [FilterType.FUTURE]: 'There are no future events now',
 };
 
+export const ERROR_MESSAGE = 'Failed to load latest route information';
+
 export const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',

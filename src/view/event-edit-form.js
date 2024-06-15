@@ -40,6 +40,15 @@ const createEventOffer = (offer, isChecked, isDisabled) => (`
   </div>`
 );
 
+const createOfferList = (offers, pointOffers, isDisabled) => (`
+  <section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">
+      ${offers.map((offer) => createEventOffer(offer, pointOffers.includes(offer.id), isDisabled)).join('')}
+    </div>
+  </section>`
+);
+
 const createEventDestination = (destination) => (`
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -56,7 +65,8 @@ const createEventDestination = (destination) => (`
 const createEventEditFormTemplate = (point, options, places) => {
   const {id, basePrice, destination, offers, type, isDisabled, isSaving, isDeleting} = point;
   const currentOffers = options.filter((option) => option.type === type)[0];
-  const currentDestination = places.find((place) => place.id === destination);
+  const defaultDestination = {destination: '', pictures: [], name: ''};
+  const currentDestination = places.find((place) => place.id === destination) ?? defaultDestination;
 
   return (`
     <li class="trip-events__item">
@@ -86,7 +96,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${currentDestination ? currentDestination.name : ''}"
+              value="${currentDestination.name}"
               list="destination-list-1"
               ${isDisabled ? 'disabled' : ''}
             >
@@ -138,19 +148,14 @@ const createEventEditFormTemplate = (point, options, places) => {
           <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
             ${id ? `${isDeleting ? 'Deleting...' : 'Delete'}` : 'Cancel'}
           </button>
-          ${id ? `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}><span class="visually-hidden">Open event</span></button>` : ''}
+          ${id ? `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+            <span class="visually-hidden">Open event</span>
+          </button>` : ''}
         </header>
-        <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${currentOffers.offers.map((offer) => createEventOffer(offer, offers.includes(offer.id), isDisabled)).join('')}
-            </div>
-          </section>
-
-          ${currentDestination ? createEventDestination(currentDestination) : ''}
-        </section>
+        ${currentOffers.offers.length !== 0 || currentDestination.destination || currentDestination.pictures.length !== 0 ? `<section class="event__details">
+          ${currentOffers.offers.length !== 0 ? createOfferList(currentOffers.offers, offers, isDisabled) : ''}
+          ${currentDestination.destination || currentDestination.pictures.length !== 0 ? createEventDestination(currentDestination) : ''}
+        </section>` : ''}
       </form>
     </li>`
   );
@@ -194,7 +199,9 @@ export default class EventEditForm extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#handleEventTypeChange);
     this.element.querySelector('#event-destination-1').addEventListener('change', this.#handleDestinationChange);
     this.element.querySelector('#event-price-1').addEventListener('change', this.#handlePriceChange);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#handleOfferChange);
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#handleOfferChange);
+    }
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
 
     this.#setDatepicker(this.element.querySelector('#event-start-time-1'), this._state.dateFrom, this.#dateFromChangeHandler);

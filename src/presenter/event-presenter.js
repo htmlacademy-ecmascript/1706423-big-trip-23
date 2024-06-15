@@ -98,7 +98,7 @@ export default class EventPresenter {
 
   setAborting() {
     if (this.#mode === Mode.DEFAULT) {
-      this.#eventEditFormComponent.shake();
+      this.#tripEventComponent.shake();
       return;
     }
 

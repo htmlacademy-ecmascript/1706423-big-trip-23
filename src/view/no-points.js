@@ -1,11 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {MessageEmptyList} from '../const.js';
+import {MessageEmptyList, ERROR_MESSAGE} from '../const.js';
 
 function createNoPointsTemplate(filterType) {
 
   return (
     `<p class="trip-events__msg">
-      ${MessageEmptyList[filterType]}
+      ${filterType ? MessageEmptyList[filterType] : ERROR_MESSAGE}
     </p>`
   );
 }
