@@ -2,7 +2,7 @@ import EventEditForm from '../view/event-edit-form';
 import TripEvent from '../view/trip-event';
 import {render, replace, remove} from '../framework/render';
 import {Mode, UpdateType, UserAction} from '../const';
-import {isDatesEqual} from '../utils/event';
+import {isDatesEqual, isPriceEqual} from '../utils/event';
 
 export default class EventPresenter {
   #eventListContainer = null;
@@ -153,7 +153,9 @@ export default class EventPresenter {
 
   #handleFormSubmit = (update) => {
     const isMinorUpdate =
-      !isDatesEqual(this.#point.dateFrom, update.dateFrom) || !isDatesEqual(this.#point.dateTo, update.dateTo);
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom)
+      || !isDatesEqual(this.#point.dateTo, update.dateTo)
+      || isPriceEqual(this.#point.basePrice, update.basePrice);
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,

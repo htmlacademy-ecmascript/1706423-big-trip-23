@@ -1,21 +1,3 @@
-export const FILTER_ITEMS = [
-  {
-    type: 'everything',
-    count: 3,
-  },
-  {
-    type: 'past',
-    count: 0,
-  },
-  {
-    type: 'present',
-    count: 0,
-  },
-  {
-    type: 'future',
-    count: 3,
-  },
-];
 export const SORT_ITEMS = [
   {
     id: 'day',
@@ -71,9 +53,9 @@ export const DateFormat = {
 
 export const FilterType = {
   EVERYTHING: 'everything',
-  PAST: 'past',
-  PRESENT: 'present',
   FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
 export const MessageEmptyList = {

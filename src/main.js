@@ -21,6 +21,7 @@ const generalPresenter = new GeneralPresenter({
   pointsModel,
   filterModel,
   onNewPointDestroy: handleNewPointFormClose,
+  onNewPointButtonDisabled: handleNewPointButtonDisabled
 });
 const filterPresenter = new FilterPresenter({filterContainer, filterModel, pointsModel});
 const newEventButton = new NewEventButton({
@@ -31,9 +32,13 @@ function handleNewPointFormClose() {
   newEventButton.element.disabled = false;
 }
 
+function handleNewPointButtonDisabled() {
+  newEventButton.element.disabled = true;
+}
+
 function handleNewPointButtonClick() {
   generalPresenter.createPoint();
-  newEventButton.element.disabled = true;
+  handleNewPointButtonDisabled();
 }
 
 filterPresenter.init();

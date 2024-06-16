@@ -14,6 +14,7 @@ export default class GeneralPresenter {
   #mainContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #handleNewPointButtonDisabled = null;
 
   #eventsList = new EventsList();
   #sortComponent = null;
@@ -29,15 +30,21 @@ export default class GeneralPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #isAddPointFormOpen = false;
 
-  constructor({mainContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({mainContainer, pointsModel, filterModel, onNewPointDestroy, onNewPointButtonDisabled}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#handleNewPointButtonDisabled = onNewPointButtonDisabled;
     this.#newEventPresenter = new NewEventPresenter({
       eventListContainer: this.#eventsList.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewPointDestroy,
+      onDestroy: () => {
+        onNewPointDestroy();
+        this.#isAddPointFormOpen = false;
+        this.#renderNoPoints();
+      },
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -66,9 +73,18 @@ export default class GeneralPresenter {
   }
 
   createPoint() {
+    if (!this.#mainContainer.contains(this.#eventsList.element)) {
+      render(this.#eventsList, this.#mainContainer);
+    }
+
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newEventPresenter.init({offers: this.offers, destinations: this.destinations});
+    this.#isAddPointFormOpen = true;
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
   }
 
   #handleModeChange = () => {
@@ -173,12 +189,12 @@ export default class GeneralPresenter {
 
   #renderNoPoints() {
     this.#noPointsComponent = new NoPoints({filterType: this.#filterType});
-    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
   }
 
   #renderErrorMessage() {
     this.#noPointsComponent = new NoPoints({});
-    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
   }
 
   #clearBoard({resetSortType = false} = {}) {
@@ -206,15 +222,19 @@ export default class GeneralPresenter {
 
     if (this.#pointsModel.isError) {
       this.#renderErrorMessage();
+      this.#handleNewPointButtonDisabled();
       return;
     }
 
-    if (this.points.length === 0) {
+    if (this.points.length === 0 && !this.#isAddPointFormOpen) {
       this.#renderNoPoints();
       return;
     }
 
-    this.#renderSort();
+    if (this.points.length > 0) {
+      this.#renderSort();
+    }
+
     render(this.#eventsList, this.#mainContainer);
     this.#renderPoints(this.points);
   }

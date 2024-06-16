@@ -52,20 +52,20 @@ const createOfferList = (offers, pointOffers, isDisabled) => (`
 const createEventDestination = (destination) => (`
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${destination.description}</p>
+    ${destination.description ? `<p class="event__destination-description">${destination.description}</p>` : ''}
 
-    <div class="event__photos-container">
+    ${destination.pictures.length !== 0 ? `<div class="event__photos-container">
       <div class="event__photos-tape">
         ${destination.pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')}
       </div>
-    </div>
+    </div>` : ''}
   </section>`
 );
 
 const createEventEditFormTemplate = (point, options, places) => {
   const {id, basePrice, destination, offers, type, isDisabled, isSaving, isDeleting} = point;
   const currentOffers = options.filter((option) => option.type === type)[0];
-  const defaultDestination = {destination: '', pictures: [], name: ''};
+  const defaultDestination = {description: '', pictures: [], name: ''};
   const currentDestination = places.find((place) => place.id === destination) ?? defaultDestination;
 
   return (`
@@ -99,6 +99,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               value="${currentDestination.name}"
               list="destination-list-1"
               ${isDisabled ? 'disabled' : ''}
+              requared
             >
             <datalist id="destination-list-1">
               ${places.map((place) => `<option value="${place.name}"></option>`).join('')}
@@ -114,6 +115,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-start-time"
               value=""
               ${isDisabled ? 'disabled' : ''}
+              requared
             >
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -124,6 +126,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-end-time"
               value=""
               ${isDisabled ? 'disabled' : ''}
+              requared
             >
           </div>
 
@@ -139,22 +142,25 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-price"
               value="${basePrice ?? 0}"
               ${isDisabled ? 'disabled' : ''}
+              requared
+              min="1"
+              max="100000"
             >
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isSaving ? 'disabled' : ''}>
             ${isSaving ? 'Saving...' : 'Save'}
           </button>
-          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+          <button class="event__reset-btn" type="reset" ${isDeleting ? 'disabled' : ''}>
             ${id ? `${isDeleting ? 'Deleting...' : 'Delete'}` : 'Cancel'}
           </button>
-          ${id ? `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+          ${id ? `<button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>` : ''}
         </header>
-        ${currentOffers.offers.length !== 0 || currentDestination.destination || currentDestination.pictures.length !== 0 ? `<section class="event__details">
+        ${currentOffers.offers.length !== 0 || currentDestination.description || currentDestination.pictures.length !== 0 ? `<section class="event__details">
           ${currentOffers.offers.length !== 0 ? createOfferList(currentOffers.offers, offers, isDisabled) : ''}
-          ${currentDestination.destination || currentDestination.pictures.length !== 0 ? createEventDestination(currentDestination) : ''}
+          ${currentDestination.description || currentDestination.pictures.length !== 0 ? createEventDestination(currentDestination) : ''}
         </section>` : ''}
       </form>
     </li>`
@@ -198,7 +204,7 @@ export default class EventEditForm extends AbstractStatefulView {
     }
     this.element.querySelector('.event__type-group').addEventListener('change', this.#handleEventTypeChange);
     this.element.querySelector('#event-destination-1').addEventListener('change', this.#handleDestinationChange);
-    this.element.querySelector('#event-price-1').addEventListener('change', this.#handlePriceChange);
+    this.element.querySelector('#event-price-1').addEventListener('input', this.#handlePriceInput);
     if (this.element.querySelector('.event__available-offers')) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#handleOfferChange);
     }
@@ -225,7 +231,10 @@ export default class EventEditForm extends AbstractStatefulView {
 
   #handleEventTypeChange = (evt) => {
     evt.preventDefault();
-    this.updateElement({type: evt.target.dataset.eventType});
+    this.updateElement({
+      type: evt.target.dataset.eventType,
+      offers: [],
+    });
   };
 
   #handleDestinationChange = (evt) => {
@@ -251,17 +260,16 @@ export default class EventEditForm extends AbstractStatefulView {
     });
   };
 
-  #handlePriceChange = (evt) => {
+  #handlePriceInput = (evt) => {
     evt.preventDefault();
-    this.updateElement({basePrice: Number(evt.target.value)});
+    this._setState({basePrice: Number(evt.target.value)});
   };
 
   #handleOfferChange = (evt) => {
     evt.preventDefault();
-    const offerId = evt.target.dataset.offerId;
-    const isChecked = evt.target.checked;
-    this.updateElement({
-      offers: isChecked
+    const {dataset: {offerId}, checked} = evt.target;
+    this._setState({
+      offers: checked
         ? [...this._state.offers, offerId]
         : [...this._state.offers.filter((id) => id !== offerId)]
     });
