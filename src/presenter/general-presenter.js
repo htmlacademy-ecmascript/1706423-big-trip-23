@@ -27,15 +27,17 @@ export default class GeneralPresenter {
 
   #eventPresenters = new Map();
   #newEventPresenter = null;
+  #headerPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
   #isAddPointFormOpen = false;
 
-  constructor({mainContainer, pointsModel, filterModel, onNewPointDestroy, onNewPointButtonDisabled}) {
+  constructor({mainContainer, pointsModel, filterModel, headerPresenter, onNewPointDestroy, onNewPointButtonDisabled}) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#headerPresenter = headerPresenter;
     this.#handleNewPointButtonDisabled = onNewPointButtonDisabled;
     this.#newEventPresenter = new NewEventPresenter({
       eventListContainer: this.#eventsList.element,

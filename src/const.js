@@ -45,6 +45,8 @@ export const DEFAULT_POINT = {
 
 export const DateFormat = {
   DATE: 'MMM D',
+  DATE_REVERSE: 'D MMM',
+  DAY: 'D',
   DATE_WITH_YEAR: 'YYYY-MM-DD',
   TIME: 'HH:mm',
   DATE_TIME: 'YYYY-MM-DDTHH:mm',
@@ -104,3 +106,5 @@ export const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
+
+export const MAX_DESTINATION_HEADER_COUNT = 3;
