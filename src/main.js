@@ -45,12 +45,8 @@ function handleNewPointButtonClick() {
 }
 
 filterPresenter.init();
-generalPresenter.init();
 pointsModel.init()
   .finally(() => {
-    if (pointsModel.points.length > 0) {
-      headerPresenter.init();
-    }
     render(newEventButton, headerContainer, RenderPosition.BEFOREEND);
   });
-
+generalPresenter.init();

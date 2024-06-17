@@ -206,6 +206,7 @@ export default class GeneralPresenter {
 
     remove(this.#sortComponent);
     remove(this.#loaderComponent);
+    this.#headerPresenter.destroy();
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
@@ -234,6 +235,7 @@ export default class GeneralPresenter {
     }
 
     if (this.points.length > 0) {
+      this.#headerPresenter.init();
       this.#renderSort();
     }
 

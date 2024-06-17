@@ -17,7 +17,7 @@ function getTimeInterval(dateFrom, dateTo) {
     result += hours < 10 ? `0${hours}H ` : `${hours}H `;
   } else {
     if (days) {
-      result += '00H';
+      result += '00H ';
     }
   }
 

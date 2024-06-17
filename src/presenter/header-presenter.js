@@ -1,9 +1,12 @@
 import TripInfo from '../view/trip-info';
 import {render, replace, remove, RenderPosition} from '../framework/render';
+import {SortType} from '../const';
+import {sortBy} from '../utils/sort';
 
 export default class HeaderPresenter {
   #headerContainer = null;
   #pointsModel = null;
+  #sortType = SortType.DAY;
 
   #tripInfoComponent = null;
 
@@ -14,37 +17,9 @@ export default class HeaderPresenter {
   constructor({headerContainer, pointsModel}) {
     this.#headerContainer = headerContainer;
     this.#pointsModel = pointsModel;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
-  init() {
-    this.#points = this.#pointsModel.points;
-    this.#offers = this.#pointsModel.offers;
-    this.#destinations = this.#pointsModel.destinations;
-
-    const prevTripInfoComponent = this.#tripInfoComponent;
-
-    this.#tripInfoComponent = new TripInfo({
-      uniqueDestinationNames: this.#getDestinationNames(),
-      points: this.#points,
-      totalCost: this.#getTotalCost(),
-    });
-
-    if (prevTripInfoComponent === null) {
-      render(this.#tripInfoComponent, this.#headerContainer, RenderPosition.AFTERBEGIN);
-      return;
-    }
-
-    replace(this.#tripInfoComponent, prevTripInfoComponent);
-    remove(prevTripInfoComponent);
-  }
-
-  destroy() {
-    remove(this.#tripInfoComponent);
-  }
-
-  #getDestinationNames() {
+  get destinationNames() {
     const destinationNames = [];
 
     this.#points.forEach((point) => {
@@ -58,7 +33,7 @@ export default class HeaderPresenter {
     return destinationNames;
   }
 
-  #getTotalCost() {
+  get totalCost() {
     let totalCost = 0;
 
     this.#points.forEach((point) => {
@@ -77,9 +52,30 @@ export default class HeaderPresenter {
     return totalCost;
   }
 
-  #handleModelEvent = () => {
-    if (this.#points.length > 0) {
-      this.init();
+  init() {
+    this.#points = sortBy[this.#sortType](this.#pointsModel.points);
+    this.#offers = this.#pointsModel.offers;
+    this.#destinations = this.#pointsModel.destinations;
+
+    const prevTripInfoComponent = this.#tripInfoComponent;
+
+    this.#tripInfoComponent = new TripInfo({
+      uniqueDestinationNames: this.destinationNames,
+      points: this.#points,
+      totalCost: this.totalCost,
+    });
+
+    if (prevTripInfoComponent === null) {
+      render(this.#tripInfoComponent, this.#headerContainer, RenderPosition.AFTERBEGIN);
+      return;
     }
-  };
+
+    replace(this.#tripInfoComponent, prevTripInfoComponent);
+    remove(prevTripInfoComponent);
+  }
+
+  destroy() {
+    remove(this.#tripInfoComponent);
+    this.#tripInfoComponent = null;
+  }
 }
