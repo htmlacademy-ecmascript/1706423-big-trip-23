@@ -4,6 +4,7 @@ import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
 import NewEventButton from './view/new-event-button';
 import DataApiService from './data-api-service';
+import HeaderPresenter from './presenter/header-presenter';
 import {RenderPosition, render} from './framework/render';
 
 const AUTHORIZATION = `Basic ${Math.random().toString(36).substring(2)}`;
@@ -16,11 +17,14 @@ const pointsModel = new PointsModel({
   dataApiService: new DataApiService(END_POINT, AUTHORIZATION)
 });
 const filterModel = new FilterModel();
+const headerPresenter = new HeaderPresenter({headerContainer, pointsModel});
 const generalPresenter = new GeneralPresenter({
   mainContainer,
   pointsModel,
   filterModel,
+  headerPresenter,
   onNewPointDestroy: handleNewPointFormClose,
+  onNewPointButtonDisabled: handleNewPointButtonDisabled
 });
 const filterPresenter = new FilterPresenter({filterContainer, filterModel, pointsModel});
 const newEventButton = new NewEventButton({
@@ -31,15 +35,18 @@ function handleNewPointFormClose() {
   newEventButton.element.disabled = false;
 }
 
-function handleNewPointButtonClick() {
-  generalPresenter.createPoint();
+function handleNewPointButtonDisabled() {
   newEventButton.element.disabled = true;
 }
 
+function handleNewPointButtonClick() {
+  generalPresenter.createPoint();
+  handleNewPointButtonDisabled();
+}
+
 filterPresenter.init();
-generalPresenter.init();
 pointsModel.init()
   .finally(() => {
     render(newEventButton, headerContainer, RenderPosition.BEFOREEND);
   });
-
+generalPresenter.init();

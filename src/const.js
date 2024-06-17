@@ -1,21 +1,3 @@
-export const FILTER_ITEMS = [
-  {
-    type: 'everything',
-    count: 3,
-  },
-  {
-    type: 'past',
-    count: 0,
-  },
-  {
-    type: 'present',
-    count: 0,
-  },
-  {
-    type: 'future',
-    count: 3,
-  },
-];
 export const SORT_ITEMS = [
   {
     id: 'day',
@@ -63,6 +45,7 @@ export const DEFAULT_POINT = {
 
 export const DateFormat = {
   DATE: 'MMM D',
+  DATE_REVERSE: 'D MMM',
   DATE_WITH_YEAR: 'YYYY-MM-DD',
   TIME: 'HH:mm',
   DATE_TIME: 'YYYY-MM-DDTHH:mm',
@@ -71,9 +54,9 @@ export const DateFormat = {
 
 export const FilterType = {
   EVERYTHING: 'everything',
-  PAST: 'past',
-  PRESENT: 'present',
   FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
 export const MessageEmptyList = {
@@ -82,6 +65,8 @@ export const MessageEmptyList = {
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.FUTURE]: 'There are no future events now',
 };
+
+export const ERROR_MESSAGE = 'Failed to load latest route information';
 
 export const Mode = {
   DEFAULT: 'DEFAULT',
@@ -120,3 +105,5 @@ export const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
+
+export const MAX_DESTINATION_HEADER_COUNT = 3;

@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { SortType } from '../const';
 
 function sortPointDate(pointA, pointB) {
-  return dayjs(pointB.dateFrom) - dayjs(pointA.dateFrom);
+  return dayjs(pointA.dateFrom) - dayjs(pointB.dateFrom);
 }
 
 function sortPointTime(pointA, pointB) {

@@ -43,11 +43,11 @@ export default class NewEventPresenter {
       return;
     }
 
-    this.#handleDestroy();
-
     remove(this.#eventEditFormComponent);
     this.#eventEditFormComponent = null;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+
+    this.#handleDestroy();
   }
 
   setSaving() {
