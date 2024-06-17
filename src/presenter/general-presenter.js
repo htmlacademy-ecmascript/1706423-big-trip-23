@@ -89,6 +89,90 @@ export default class GeneralPresenter {
     }
   }
 
+  #renderSort() {
+    this.#sortComponent = new Sort({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange,
+    });
+
+    render(this.#sortComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderPoint(point) {
+    const eventPresenter = new EventPresenter({
+      eventListContainer: this.#eventsList.element,
+      onDataChange: this.#handleViewAction,
+      onModeChange: this.#handleModeChange,
+    });
+    eventPresenter.init({point, offers: this.offers, destinations: this.destinations});
+    this.#eventPresenters.set(point.id, eventPresenter);
+  }
+
+  #renderPoints(points) {
+    points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderLoading() {
+    render(this.#loaderComponent, this.#mainContainer, RenderPosition.BEFOREEND);
+  }
+
+  #renderNoPoints() {
+    this.#noPointsComponent = new NoPoints({filterType: this.#filterType});
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
+  }
+
+  #renderErrorMessage() {
+    this.#noPointsComponent = new NoPoints({});
+    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
+  }
+
+  #clearBoard({resetSortType = false} = {}) {
+    this.#newEventPresenter.destroy();
+    this.#eventPresenters.forEach((presenter) => presenter.destroy());
+    this.#eventPresenters.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#loaderComponent);
+
+    if (this.#pointsModel.points.length === 0) {
+      this.#headerPresenter.destroy();
+    }
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+  }
+
+  #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.#pointsModel.isErrorLoading) {
+      this.#renderErrorMessage();
+      this.#handleNewPointButtonDisabled();
+      return;
+    }
+
+    if (this.points.length === 0 && !this.#isAddPointFormOpen) {
+      this.#renderNoPoints();
+      return;
+    }
+
+    if (this.points.length > 0) {
+      this.#headerPresenter.init();
+      this.#renderSort();
+    }
+
+    render(this.#eventsList, this.#mainContainer);
+    this.#renderPoints(this.points);
+  }
+
   #handleModeChange = () => {
     this.#newEventPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.resetView());
@@ -161,85 +245,4 @@ export default class GeneralPresenter {
     this.#clearBoard();
     this.#renderBoard();
   };
-
-  #renderSort() {
-    this.#sortComponent = new Sort({
-      currentSortType: this.#currentSortType,
-      onSortTypeChange: this.#handleSortTypeChange,
-    });
-
-    render(this.#sortComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
-  }
-
-  #renderPoint(point) {
-    const eventPresenter = new EventPresenter({
-      eventListContainer: this.#eventsList.element,
-      onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange,
-    });
-    eventPresenter.init({point, offers: this.offers, destinations: this.destinations});
-    this.#eventPresenters.set(point.id, eventPresenter);
-  }
-
-  #renderPoints(points) {
-    points.forEach((point) => this.#renderPoint(point));
-  }
-
-  #renderLoading() {
-    render(this.#loaderComponent, this.#mainContainer, RenderPosition.BEFOREEND);
-  }
-
-  #renderNoPoints() {
-    this.#noPointsComponent = new NoPoints({filterType: this.#filterType});
-    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
-  }
-
-  #renderErrorMessage() {
-    this.#noPointsComponent = new NoPoints({});
-    render(this.#noPointsComponent, this.#mainContainer, RenderPosition.BEFOREEND);
-  }
-
-  #clearBoard({resetSortType = false} = {}) {
-    this.#newEventPresenter.destroy();
-    this.#eventPresenters.forEach((presenter) => presenter.destroy());
-    this.#eventPresenters.clear();
-
-    remove(this.#sortComponent);
-    remove(this.#loaderComponent);
-    this.#headerPresenter.destroy();
-
-    if (this.#noPointsComponent) {
-      remove(this.#noPointsComponent);
-    }
-
-    if (resetSortType) {
-      this.#currentSortType = SortType.DAY;
-    }
-  }
-
-  #renderBoard() {
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
-    }
-
-    if (this.#pointsModel.isError) {
-      this.#renderErrorMessage();
-      this.#handleNewPointButtonDisabled();
-      return;
-    }
-
-    if (this.points.length === 0 && !this.#isAddPointFormOpen) {
-      this.#renderNoPoints();
-      return;
-    }
-
-    if (this.points.length > 0) {
-      this.#headerPresenter.init();
-      this.#renderSort();
-    }
-
-    render(this.#eventsList, this.#mainContainer);
-    this.#renderPoints(this.points);
-  }
 }

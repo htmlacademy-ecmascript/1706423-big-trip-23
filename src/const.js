@@ -46,7 +46,6 @@ export const DEFAULT_POINT = {
 export const DateFormat = {
   DATE: 'MMM D',
   DATE_REVERSE: 'D MMM',
-  DAY: 'D',
   DATE_WITH_YEAR: 'YYYY-MM-DD',
   TIME: 'HH:mm',
   DATE_TIME: 'YYYY-MM-DDTHH:mm',
