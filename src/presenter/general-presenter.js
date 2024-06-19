@@ -133,10 +133,7 @@ export default class GeneralPresenter {
 
     remove(this.#sortComponent);
     remove(this.#loaderComponent);
-
-    if (this.#pointsModel.points.length === 0) {
-      this.#headerPresenter.destroy();
-    }
+    this.#headerPresenter.destroy();
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
@@ -159,13 +156,16 @@ export default class GeneralPresenter {
       return;
     }
 
+    if (this.#pointsModel.points.length > 0) {
+      this.#headerPresenter.init();
+    }
+
     if (this.points.length === 0 && !this.#isAddPointFormOpen) {
       this.#renderNoPoints();
       return;
     }
 
     if (this.points.length > 0) {
-      this.#headerPresenter.init();
       this.#renderSort();
     }
 
