@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {HOURS_IN_DAY, MINUTES_IN_HOUR, TENS_PLACE} from '../const';
 
 function getHumanDate(date, format) {
   return dayjs(date).format(format);
@@ -9,21 +10,21 @@ function getTimeInterval(dateFrom, dateTo) {
 
   const days = dayjs(dateTo).diff(dayjs(dateFrom), 'd');
   if (days) {
-    result += days < 10 ? `0${days}D ` : `${days}D `;
+    result += days < TENS_PLACE ? `0${days}D ` : `${days}D `;
   }
 
-  const hours = dayjs(dateTo).diff(dayjs(dateFrom), 'h') % 24;
+  const hours = dayjs(dateTo).diff(dayjs(dateFrom), 'h') % HOURS_IN_DAY;
   if (hours) {
-    result += hours < 10 ? `0${hours}H ` : `${hours}H `;
+    result += hours < TENS_PLACE ? `0${hours}H ` : `${hours}H `;
   } else {
     if (days) {
       result += '00H ';
     }
   }
 
-  const minutes = dayjs(dateTo).diff(dayjs(dateFrom), 'm') % 60;
+  const minutes = dayjs(dateTo).diff(dayjs(dateFrom), 'm') % MINUTES_IN_HOUR;
   if (minutes) {
-    result += minutes < 10 ? `0${minutes}M` : `${minutes}M`;
+    result += minutes < TENS_PLACE ? `0${minutes}M` : `${minutes}M`;
   } else {
     result += '00M';
   }
