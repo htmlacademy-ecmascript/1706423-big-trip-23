@@ -28,7 +28,7 @@ const generalPresenter = new GeneralPresenter({
 });
 const filterPresenter = new FilterPresenter({filterContainer, filterModel, pointsModel});
 const newEventButton = new NewEventButton({
-  onClick: handleNewPointButtonClick,
+  onButtonClick: handleNewPointButtonClick,
 });
 
 function handleNewPointFormClose() {

@@ -107,3 +107,7 @@ export const TimeLimit = {
 };
 
 export const MAX_DESTINATION_HEADER_COUNT = 3;
+export const HOURS_IN_DAY = 24;
+export const MINUTES_IN_HOUR = 60;
+export const TENS_PLACE = 10;
+
