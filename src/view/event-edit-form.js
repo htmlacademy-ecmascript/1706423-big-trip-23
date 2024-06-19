@@ -100,7 +100,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               value="${he.encode(currentDestination.name)}"
               list="destination-list-1"
               ${isDisabled ? 'disabled' : ''}
-              requared
+              required
             >
             <datalist id="destination-list-1">
               ${places.map((place) => `<option value="${place.name}"></option>`).join('')}
@@ -116,7 +116,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-start-time"
               value=""
               ${isDisabled ? 'disabled' : ''}
-              requared
+              required
             >
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -127,7 +127,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-end-time"
               value=""
               ${isDisabled ? 'disabled' : ''}
-              requared
+              required
             >
           </div>
 
@@ -143,7 +143,7 @@ const createEventEditFormTemplate = (point, options, places) => {
               name="event-price"
               value="${basePrice ?? 0}"
               ${isDisabled ? 'disabled' : ''}
-              requared
+              required
               min="1"
               max="100000"
             >
@@ -207,6 +207,7 @@ export default class EventEditForm extends AbstractStatefulView {
         defaultDate: date,
         onChange: cb,
         minDate: minDate,
+        allowInput: true,
       },
     );
   }
@@ -216,16 +217,16 @@ export default class EventEditForm extends AbstractStatefulView {
     if (this.element.querySelector('.event__rollup-btn')) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupButtonClickHandler);
     }
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#handleEventTypeChange);
-    this.element.querySelector('#event-destination-1').addEventListener('change', this.#handleDestinationChange);
-    this.element.querySelector('#event-price-1').addEventListener('input', this.#handlePriceInput);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeChangeHandler);
+    this.element.querySelector('#event-destination-1').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('#event-price-1').addEventListener('input', this.#priceInputHandler);
     if (this.element.querySelector('.event__available-offers')) {
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#handleOfferChange);
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
     }
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
 
-    this.#setDatepicker(this.element.querySelector('#event-start-time-1'), this._state.dateFrom, this.#handleDateFromChange);
-    this.#setDatepicker(this.element.querySelector('#event-end-time-1'), this._state.dateTo, this.#handleDateToChange, this._state.dateFrom);
+    this.#setDatepicker(this.element.querySelector('#event-start-time-1'), this._state.dateFrom, this.#dateFromChangeHandler);
+    this.#setDatepicker(this.element.querySelector('#event-end-time-1'), this._state.dateTo, this.#dateToChangeHandler, this._state.dateFrom);
   }
 
   #formSubmitHandler = (evt) => {
@@ -243,7 +244,7 @@ export default class EventEditForm extends AbstractStatefulView {
     this.#handleRollupButtonClick();
   };
 
-  #handleEventTypeChange = (evt) => {
+  #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.dataset.eventType,
@@ -251,7 +252,7 @@ export default class EventEditForm extends AbstractStatefulView {
     });
   };
 
-  #handleDestinationChange = (evt) => {
+  #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     const selectedDestination = this.#places.find((place) => place.name === evt.target.value);
 
@@ -262,24 +263,24 @@ export default class EventEditForm extends AbstractStatefulView {
     this.updateElement({destination: selectedDestination.id});
   };
 
-  #handleDateFromChange = ([userDate]) => {
+  #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
     });
   };
 
-  #handleDateToChange = ([userDate]) => {
+  #dateToChangeHandler = ([userDate]) => {
     this.updateElement({
       dateTo: userDate,
     });
   };
 
-  #handlePriceInput = (evt) => {
+  #priceInputHandler = (evt) => {
     evt.preventDefault();
     this._setState({basePrice: Number(evt.target.value)});
   };
 
-  #handleOfferChange = (evt) => {
+  #offerChangeHandler = (evt) => {
     evt.preventDefault();
     const {dataset: {offerId}, checked} = evt.target;
     this._setState({
